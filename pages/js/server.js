@@ -3,44 +3,80 @@ const countSubscribers = document.getElementById("count-subscribers");
 const countClients = document.getElementById("count-clients");
 const ws = new WebSocket(`ws://${location.host}/ws/server`);
 
-// Wait for the WebSocket to open
+// Flag to check if counts have been requested after reconnect
+let countsRequested = false;
+
 ws.onopen = () => {
     console.log("WebSocket connection established");
-    // Send the count request when the connection is open
-    ws.send(JSON.stringify({ action: "count" }));
+
+    if (!countsRequested) {
+        ws.send(JSON.stringify({ action: "count" }));
+        ws.send(JSON.stringify({ action: "get_notifications" }));
+        countsRequested = true;
+    }
 };
 
 ws.onmessage = (event) => {
-    const msg = JSON.parse(event.data); // Parse the message to an object
-
+    const msg = JSON.parse(event.data);
     if (msg.type === "counts") {
         countSubscribers.textContent = msg.subscribers;
         countClients.textContent = msg.clients;
     }
+
+    if (msg.type === "notifications") {
+        msg.notifications.forEach(notification => {
+            const div = document.createElement("div");
+            div.textContent = notification.message;
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        });
+    }
+};    
+
+ws.onerror = (error) => {
+    console.error("WebSocket error:", error);
+};
+
+ws.onclose = () => {
+    console.warn("WebSocket connection closed");
 };
 
 function send() {
-    const msg = document.getElementById("msg").value.trim();
+    if (countSubscribers.textContent === "0") {
+        return alert("No subscribers to notify!");
+    }
+
+    const msgInput = document.getElementById("msg");
+    const msg = msgInput.value.trim();
     if (!msg) return alert("Message is empty!");
 
-    const div = document.createElement("div");
-    div.textContent = msg;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
-
-    // Send message only if WebSocket is open
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ action: "notify", message: msg }));
+
+        const div = document.createElement("div");
+        div.textContent = msg;
+        log.appendChild(div);
+        log.scrollTop = log.scrollHeight;
+
+        msgInput.value = "";
     } else {
         alert("WebSocket is not open yet!");
     }
 }
 
-// IF RELOADING THE PAGE, CHECK IF THE USER IS SUBSCRIBED
-window.onload = function() {
+// Re-send count request after reload once WebSocket is open
+window.addEventListener("load", () => {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ action: "count" }));
+        ws.send(JSON.stringify({ action: "get_notifications" }));
+        countsRequested = true;
     } else {
-        ws.onopen = () => ws.send(JSON.stringify({ action: "count" }));
+        ws.addEventListener("open", () => {
+            if (!countsRequested) {
+                ws.send(JSON.stringify({ action: "count" }));
+                ws.send(JSON.stringify({ action: "get_notifications" }));
+                countsRequested = true;
+            }
+        });
     }
-};
+});

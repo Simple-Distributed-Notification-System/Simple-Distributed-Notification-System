@@ -11,8 +11,16 @@ async def notify_clients_subscribed(message: str):
         await client.send_text(message)
 
 async def send_count():
-    await server_ws[0].send_text(json.dumps({
+    return json.dumps({
         "type": "counts",
         "subscribers": len(subscribed_clients),
         "clients": len(clients),
-    }))
+    })
+
+# في shared_tools.py
+async def get_clients_data():
+    return {
+        "type": "clients",
+        "subscribers": list(subscribed_clients.keys()),
+        "clients": len(clients),
+    }

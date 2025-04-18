@@ -5,6 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from app.server import websocket_server
 from app.client import websocket_client
+from app.config import ID_SERVER
 
 app = FastAPI()
 
@@ -17,7 +18,7 @@ async def get_client_page():
 
 @app.get("/server/{id}")
 async def get_server_page(id: str):
-    if id != "hi":
+    if id != ID_SERVER:
         return HTMLResponse("Invalid access")
     
     with open("pages/server.html", "r", encoding="utf-8") as f:

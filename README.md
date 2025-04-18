@@ -49,7 +49,7 @@ This project is a real-time WebSocket-based system built using FastAPI for the b
 Install dependencies:
 
   ```bash
-  pip install fastapi uvicorn
+    pip install fastapi uvicorn orjson motor python-dotenv
   ```
 
 ---
@@ -62,12 +62,12 @@ Install dependencies:
   ```
 2. Start the FastAPI server:
   ```bash
-    python -m uvicorn app.main:app --reload
+    python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
   ```
 3. Open your browser and visit:
 
-- Server Dashboard: http://127.0.0.1:8000/server  
-- Client Page: http://127.0.0.1:8000/
+- Server Dashboard: localhost/server/{id}  
+- Client Page: localhost:8000/
 
 ---
 

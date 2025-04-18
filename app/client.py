@@ -7,7 +7,7 @@ async def websocket_client(websocket: WebSocket, user_id: str):
     await websocket.accept()
     clients.append(websocket)
     if server_ws[0]:
-        await send_count()
+        await server_ws[0].send_text(await send_count())
     try:
         while True:
             data = await websocket.receive_text()
@@ -16,11 +16,13 @@ async def websocket_client(websocket: WebSocket, user_id: str):
                 subscribed_clients[user_id] = websocket
             elif data == "unsubscribe":
                 subscribed_clients.pop(user_id, None)
+
             if server_ws[0]:
-                await send_count()
+                await server_ws[0].send_text(await send_count())
 
     except WebSocketDisconnect:
         clients.remove(websocket)
         subscribed_clients.pop(user_id, None)
         if server_ws[0]:
-            await send_count()
+            await server_ws[0].send_text(await send_count())
+
