@@ -44,3 +44,11 @@ h1
 h1,h3,p{
     color:  #f4f6f8;
 }
+
+.message-card {
+    border-left: 4px solid #142137;
+}
+
+.message-card:hover {
+    border-left: 4px solid #4C6A92;
+}

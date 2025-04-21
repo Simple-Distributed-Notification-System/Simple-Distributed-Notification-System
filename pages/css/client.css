@@ -51,3 +51,10 @@ button:hover
     font-family: sans-serif;
     font-size: 14px;
 }
+
+.message-card {
+    border-left: 4px solid #142137;
+}
+.message-card:hover {
+    border-left: 4px solid #4C6A92;
+}
