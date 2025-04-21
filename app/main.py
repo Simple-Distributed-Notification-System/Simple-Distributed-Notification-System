@@ -31,3 +31,8 @@ async def websocket_client_route(websocket: WebSocket, user_id: str):
 @app.websocket("/ws/server")
 async def websocket_server_route(websocket: WebSocket):
     await websocket_server(websocket)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

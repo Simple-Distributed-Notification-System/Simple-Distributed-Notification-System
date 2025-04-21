@@ -1,15 +1,23 @@
 let isSubscribed = false;
+let userId = null;
 const subscribeBtn = document.getElementById("subscribeBtn");
 const log = document.getElementById('log');
 
-let userId;
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
 
 if (!localStorage.getItem("userId")) {
-    userId = crypto.randomUUID();
+    userId = generateUUID();
     localStorage.setItem("userId", userId);
 } else {
     userId = localStorage.getItem("userId");
 }
+
 const ws = new WebSocket(`ws://${location.host}/ws/client/${userId}`);
 
 ws.onopen = function() {
@@ -18,10 +26,20 @@ ws.onopen = function() {
 };
 
 ws.onmessage = function(event) {
-    const div = document.createElement('div');
-    div.textContent = event.data;
-    log.appendChild(div);
-    log.scrollTop = log.scrollHeight;
+    const msg = JSON.parse(event.data);
+
+    if (msg.type === "notification") {
+        const messageCard = document.createElement('div');
+        messageCard.className = 'message-card fade-in';
+
+        const messageText = document.createElement('div');
+        messageText.className = 'message-text';
+        messageText.textContent = msg.message;
+
+        messageCard.appendChild(messageText);
+        log.appendChild(messageCard);
+        log.scrollTop = log.scrollHeight;
+    }
 };
 
 ws.onerror = function(error) {
@@ -36,27 +54,15 @@ function subscription() {
     isSubscribed = !isSubscribed;
     subscribeBtn.innerText = isSubscribed ? "Unsubscribe" : "Subscribe";
     ws.send(isSubscribed ? "subscribe" : "unsubscribe");
-    // Log the subscription status
+
     showVisualNotification("Subscription Status", isSubscribed ? "Subscribed" : "Unsubscribed");
 }
 
 function showVisualNotification(title, message) {
-    const notif = document.createElement('div');
-    notif.textContent = `${title}: ${message}`;
-    notif.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        background: #222;
-        color: #fff;
-        padding: 10px 20px;
-        border-radius: 10px;
-        z-index: 9999;
-        box-shadow: 0 0 10px #000;
-        font-size: 14px;
-        font-family: sans-serif;
-    `;
-    document.body.appendChild(notif);
+    const notify = document.createElement('div');
+    notify.textContent = `${title}: ${message}`;
+    notify.classList.add('notification');
+    document.body.appendChild(notify);
 
-    setTimeout(() => notif.remove(), 5000);
+    setTimeout(() => notify.remove(), 5000);
 }

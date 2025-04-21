@@ -1,10 +1,10 @@
 body 
 { 
+    background-image: url('/pages/images/Server Background.png');
     font-family: Arial;     
     max-width: 600px;
     margin: auto; 
     padding: 30px; 
-    /* background-color: #f4f6f8; */
 }
 
 textarea 
@@ -29,12 +29,11 @@ button
     color:  #f4f6f8;
 }
 
-#messages 
+#msg
 { 
     background: #f0f0f0;
     padding: 10px; 
-    height: 200px; 
-    overflow-y: auto; border: 1px solid #ccc; 
+    border: 1px solid #ccc; 
 }
 
 h1

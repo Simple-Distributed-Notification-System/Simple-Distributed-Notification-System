@@ -10,9 +10,7 @@ ws.onopen = () => {
     console.log("WebSocket connection established");
 
     if (!countsRequested) {
-        ws.send(JSON.stringify({ action: "count" }));
-        ws.send(JSON.stringify({ action: "get_notifications" }));
-        countsRequested = true;
+        sendCount();
     }
 };
 
@@ -25,10 +23,7 @@ ws.onmessage = (event) => {
 
     if (msg.type === "notifications") {
         msg.notifications.forEach(notification => {
-            const div = document.createElement("div");
-            div.textContent = notification.message;
-            log.appendChild(div);
-            log.scrollTop = log.scrollHeight;
+            displayNotification(notification.message);
         });
     }
 };    
@@ -47,17 +42,13 @@ function send() {
     }
 
     const msgInput = document.getElementById("msg");
-    const msg = msgInput.value.trim();
+    const msg = msgInput.value;
     if (!msg) return alert("Message is empty!");
 
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ action: "notify", message: msg }));
 
-        const div = document.createElement("div");
-        div.textContent = msg;
-        log.appendChild(div);
-        log.scrollTop = log.scrollHeight;
-
+        displayNotification(msg);
         msgInput.value = "";
     } else {
         alert("WebSocket is not open yet!");
@@ -67,16 +58,33 @@ function send() {
 // Re-send count request after reload once WebSocket is open
 window.addEventListener("load", () => {
     if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({ action: "count" }));
-        ws.send(JSON.stringify({ action: "get_notifications" }));
-        countsRequested = true;
+        sendCount();
     } else {
         ws.addEventListener("open", () => {
             if (!countsRequested) {
-                ws.send(JSON.stringify({ action: "count" }));
-                ws.send(JSON.stringify({ action: "get_notifications" }));
-                countsRequested = true;
+                sendCount();
             }
         });
     }
 });
+
+// function to send count
+function sendCount() {
+    ws.send(JSON.stringify({ action: "count" }));
+    ws.send(JSON.stringify({ action: "get_notifications" }));
+    countsRequested = true;
+}
+
+// function to display notification messages
+function displayNotification(msg) {
+    const messageCard = document.createElement('div');
+    messageCard.className = 'message-card fade-in';
+
+    const messageText = document.createElement('div');
+    messageText.className = 'message-text';
+    messageText.textContent = msg;
+
+    messageCard.appendChild(messageText);
+    log.appendChild(messageCard);
+    log.scrollTop = log.scrollHeight;
+}

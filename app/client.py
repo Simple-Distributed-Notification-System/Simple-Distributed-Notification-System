@@ -1,13 +1,13 @@
 # client.py
 
 from fastapi import WebSocket, WebSocketDisconnect
-from app.shared_tools import server_ws, subscribed_clients, clients, send_count
+from app.shared_tools import server_ws, subscribed_clients, clients, get_clients_count
 
 async def websocket_client(websocket: WebSocket, user_id: str):
     await websocket.accept()
     clients.append(websocket)
     if server_ws[0]:
-        await server_ws[0].send_text(await send_count())
+        await server_ws[0].send_text(await get_clients_count())
     try:
         while True:
             data = await websocket.receive_text()
@@ -18,11 +18,11 @@ async def websocket_client(websocket: WebSocket, user_id: str):
                 subscribed_clients.pop(user_id, None)
 
             if server_ws[0]:
-                await server_ws[0].send_text(await send_count())
+                await server_ws[0].send_text(await get_clients_count())
 
     except WebSocketDisconnect:
         clients.remove(websocket)
         subscribed_clients.pop(user_id, None)
         if server_ws[0]:
-            await server_ws[0].send_text(await send_count())
+            await server_ws[0].send_text(await get_clients_count())
 
