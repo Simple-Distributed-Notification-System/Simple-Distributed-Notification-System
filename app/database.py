@@ -1,5 +1,7 @@
 # database.py
 
+# import uuid
+
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.shared_tools import get_clients_data
@@ -17,6 +19,7 @@ async def insert_notification(message: str):
 
     clients_data = await get_clients_data()
     await collection.insert_one({
+        # "_id": str(uuid.uuid4()),  # Use UUID for unique ID generation
         "_id": new_id,
         "type": "notification",
         "message": message,
