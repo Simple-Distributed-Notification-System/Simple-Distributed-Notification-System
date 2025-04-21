@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 from app.server import websocket_server
 from app.client import websocket_client
-from app.config import ID_SERVER
+from app.config import ID_SERVER, SERVER_URL
 
 app = FastAPI()
 
@@ -35,4 +35,6 @@ async def websocket_server_route(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
+    print(f"Server started at {SERVER_URL}")
+    print(f"Server page: {SERVER_URL}/server/{ID_SERVER}")
     uvicorn.run(app, host="0.0.0.0", port=8000)
