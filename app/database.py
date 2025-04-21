@@ -5,11 +5,11 @@
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.shared_tools import get_clients_data
-from app.config import MONGODB_URI_LOCAL
+from app.config import MONGODB_URI_LOCAL, MONGODB_URI_REMOTE
 
 # MongoDB setup
 # client = AsyncIOMotorClient() # mongodb atlas server
-client = AsyncIOMotorClient(MONGODB_URI_LOCAL)  # local mongodb server
+client = AsyncIOMotorClient(MONGODB_URI_REMOTE)  
 db = client["Notification"]
 collection = db["test"]  # collection name
 
