@@ -23,7 +23,7 @@ ws.onmessage = (event) => {
 
     if (msg.type === "notifications") {
         msg.notifications.forEach(notification => {
-            displayNotification(notification.message);
+            displayMassage(notification.message);
         });
     }
 };    
@@ -48,7 +48,7 @@ function send() {
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ action: "notify", message: msg }));
 
-        displayNotification(msg);
+        displayMassage(msg);
         msgInput.value = "";
     } else {
         alert("WebSocket is not open yet!");
@@ -76,7 +76,7 @@ function sendCount() {
 }
 
 // function to display notification messages
-function displayNotification(msg) {
+function displayMassage(msg) {
     const messageCard = document.createElement('div');
     messageCard.className = 'message-card fade-in';
 

@@ -1,22 +1,21 @@
 let isSubscribed = false;
-let userId = 0;
+let userId = "";
 const subscribeBtn = document.getElementById("subscribeBtn");
 const log = document.getElementById('log');
 
-// function generateUUID() {
-//     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-//         const r = Math.random() * 16 | 0;
-//         const v = c === 'x' ? r : (r & 0x3 | 0x8);
-//         return v.toString(16);
-//     });
-// }
-
 if (!localStorage.getItem("userId")) {
-    // userId = generateUUID();
-    userId = ++userId;
+    userId = generateUUID();
     localStorage.setItem("userId", userId);
 } else {
     userId = localStorage.getItem("userId");
+}
+
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
 }
 
 const ws = new WebSocket(`ws://${location.host}/ws/client/${userId}`);
@@ -30,16 +29,7 @@ ws.onmessage = function(event) {
     const msg = JSON.parse(event.data);
 
     if (msg.type === "notification") {
-        const messageCard = document.createElement('div');
-        messageCard.className = 'message-card fade-in';
-
-        const messageText = document.createElement('div');
-        messageText.className = 'message-text';
-        messageText.textContent = msg.message;
-
-        messageCard.appendChild(messageText);
-        log.appendChild(messageCard);
-        log.scrollTop = log.scrollHeight;
+        displayMassage(msg.message);
     }
 };
 
@@ -49,14 +39,21 @@ ws.onerror = function(error) {
 
 ws.onclose = function(event) {
     console.log("WebSocket closed:", event);
+    console.log("Close code:", event.code, "Reason:", event.reason);
+
+    showVisualNotification("Connection closed (" + event.code + ")", event.reason);
 };
 
 function subscription() {
-    isSubscribed = !isSubscribed;
-    subscribeBtn.innerText = isSubscribed ? "Unsubscribe" : "Subscribe";
-    ws.send(isSubscribed ? "subscribe" : "unsubscribe");
+    if (ws.readyState === WebSocket.OPEN) {
+        isSubscribed = !isSubscribed;
+        subscribeBtn.innerText = isSubscribed ? "Unsubscribe" : "Subscribe";
+        ws.send(isSubscribed ? "subscribe" : "unsubscribe");
 
-    showVisualNotification("Subscription Status", isSubscribed ? "Subscribed" : "Unsubscribed");
+        showVisualNotification("Subscription Status", isSubscribed ? "Subscribed" : "Unsubscribed");
+    } else {
+        showVisualNotification("Error", "Not connected to server");
+    }
 }
 
 function showVisualNotification(title, message) {
@@ -66,4 +63,17 @@ function showVisualNotification(title, message) {
     document.body.appendChild(notify);
 
     setTimeout(() => notify.remove(), 5000);
+}
+
+function displayMassage(msg) {
+    const messageCard = document.createElement('div');
+    messageCard.className = 'message-card fade-in';
+
+    const messageText = document.createElement('div');
+    messageText.className = 'message-text';
+    messageText.textContent = msg;
+
+    messageCard.appendChild(messageText);
+    log.appendChild(messageCard);
+    log.scrollTop = log.scrollHeight;
 }

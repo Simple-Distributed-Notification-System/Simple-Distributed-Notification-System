@@ -1,7 +1,7 @@
 import json
 
 server_ws = [None]
-clients = []
+clients = {}
 subscribed_clients = {}  
 
 async def notify_clients_subscribed(message: str):
