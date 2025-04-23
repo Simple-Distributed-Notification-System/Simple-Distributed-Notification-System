@@ -4,21 +4,14 @@ const subscribeBtn = document.getElementById("subscribeBtn");
 const log = document.getElementById('log');
 
 if (!localStorage.getItem("userId")) {
-    userId = generateUUID();
+    userId = uuidv4();
     localStorage.setItem("userId", userId);
 } else {
     userId = localStorage.getItem("userId");
 }
 
-function generateUUID() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-        const r = Math.random() * 16 | 0;
-        const v = c === 'x' ? r : (r & 0x3 | 0x8);
-        return v.toString(16);
-    });
-}
 
-const ws = new WebSocket(`ws://${location.host}/ws/client/${userId}`);
+const ws = new WebSocket(`wss://${location.host}/ws/client/${userId}`);
 
 ws.onopen = function() {
     console.log("userId:", userId);

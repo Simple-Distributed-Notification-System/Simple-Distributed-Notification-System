@@ -1,7 +1,7 @@
 const log = document.getElementById('messages');
 const countSubscribers = document.getElementById("count-subscribers");
 const countClients = document.getElementById("count-clients");
-const ws = new WebSocket(`ws://${location.host}/ws/server`);
+const ws = new WebSocket(`wss://${location.host}/ws/server`);
 
 // Flag to check if counts have been requested after reconnect
 let countsRequested = false;
