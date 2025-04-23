@@ -4,7 +4,7 @@ const subscribeBtn = document.getElementById("subscribeBtn");
 const log = document.getElementById('log');
 
 if (!localStorage.getItem("userId")) {
-    userId = uuidv4();
+    userId = crypto.randomUUID();
     localStorage.setItem("userId", userId);
 } else {
     userId = localStorage.getItem("userId");
