@@ -61,6 +61,7 @@ async def websocket_client(websocket: WebSocket):
                         await update_user(user_id, token=token)  # Update token
                         await send_email(user["email"], token)  # Send email with token
                         await websocket.send_json({"type": "success", "message": "Token sent to your email."})
+                        continue
                     else:
                         # Update last login time
                         await update_user(user_id)

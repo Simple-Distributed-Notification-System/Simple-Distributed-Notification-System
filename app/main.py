@@ -1,5 +1,5 @@
 # main.py
-
+import os
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
@@ -45,6 +45,18 @@ async def websocket_server_route(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
+
     print(f"Server started at {SERVER_URL}")
     print(f"Server page: {SERVER_URL}/server/{ID_SERVER}")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+    cert_path = os.path.join("app", "certs", "cert.pem")
+    key_path = os.path.join("app", "certs", "key.pem")
+
+    uvicorn.run(
+        "app.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        ssl_certfile=cert_path,
+        ssl_keyfile=key_path
+    )

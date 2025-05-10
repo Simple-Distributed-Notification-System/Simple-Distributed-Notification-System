@@ -1,99 +1,132 @@
+
 # Real-time Notification & Chat App with FastAPI + WebSocket
 
-This project is a real-time WebSocket-based system built using FastAPI for the backend and HTML/CSS/JavaScript for the frontend. It enables real-time updates between a server and multiple clients. The server tracks the number of connected users and subscribers and supports sending/receiving notifications.
+This project is a real-time WebSocket-based system built with FastAPI (backend) and HTML/CSS/JavaScript (frontend). It enables real-time communication between a server and multiple clients, supporting live notifications and connected user tracking.
 
 ---
 
-## Project Structure
-   ```bash
-      Project/
-      │
-      ├── app/                          # Application logic and FastAPI code
-      │   ├── main.py                   # FastAPI entry point (handles routing and WebSocket setup)
-      │   ├── config.py                 # Configuration file to store environment variables (e.g., MongoDB URI, server ID)
-      │   ├── database.py               # MongoDB database operations (insert, retrieve notifications)
-      │   ├── server.py                 # Handles WebSocket logic for the server dashboard (manage server-side connections)
-      │   ├── client.py                 # Handles WebSocket logic for client subscribers (manage client-side connections)
-      │   └── shared_tools.py           # Shared utility functions (e.g., fetching client data, utility functions for WebSockets)
-      │
-      ├── pages/                         # Front-end files (HTML, CSS, JS, images)
-      │   ├── client.html               # Client UI (subscriber interface where clients receive notifications)
-      │   ├── server.html               # Server UI (dashboard interface to manage notifications and view data)
-      │   ├── css/                      # Stylesheets for the UI
-      │   │   ├── client.css            # Styling for client-side UI (visual look of the client page)
-      │   │   └── server.css            # Styling for server-side UI (visual look of the server dashboard)
-      │   ├── js/                       # JavaScript files for WebSocket handling on the client and server
-      │   │   ├── client.js             # JavaScript for client-side WebSocket handling (to connect and manage messages)
-      │   │   └── server.js             # JavaScript for server-side WebSocket handling (for receiving and broadcasting messages)
-      │   └── images/                   # Images used in the UI (e.g., background images, icons)
-      │       └── Server Background.png # Optional background image for the server page
-      │
-      ├── .env                           # Environment variables file (store secrets like MongoDB URI, server ID, etc.)
-      ├── .gitignore                     # Git ignore file to exclude files/folders from version control (e.g., .env)
-      └── README.md                      # Project documentation (overview, setup instructions, usage)
-  ```
----
+## 🔧 Project Structure
 
-## Features
-
-- Real-time bi-directional communication using WebSockets  
-- Live tracking of connected clients and subscribers  
-- Clients can send messages/notifications to the server  
-- Server dashboard displays messages and user counts in real time  
-- Responsive web-based UI with FastAPI backend
-
----
-
-## Requirements
-
-- Python 3.8+  
-- FastAPI  
-- Uvicorn
-
-Install dependencies:
-
-  ```bash
-    pip install fastapi uvicorn orjson motor python-dotenv
-  ```
+```bash
+Project/
+│
+├── app/                           # Backend logic and FastAPI code
+│   ├── certs/                     # SSL/TLS certificates
+│   │   ├── cert.pem
+│   │   └── key.pem
+│   ├── main.py                    # FastAPI entry point
+│   ├── config.py                  # Environment configurations
+│   ├── database.py                # MongoDB operations
+│   ├── server.py                  # Server WebSocket logic
+│   ├── client.py                  # Client WebSocket logic
+│   ├── msg.py                     # Email notifications handler
+│   └── shared_tools.py            # Shared utilities
+│
+├── pages/                         # Frontend (HTML/CSS/JS)
+│   ├── client.html
+│   ├── server.html
+│   ├── css/
+│   │   ├── client.css
+│   │   ├── common.css
+│   │   └── server.css
+│   ├── js/
+│   │   ├── client.js
+│   │   └── server.js
+│   └── images/
+│       ├── Server Background.png
+│       ├── favicon_client.ico
+│       ├── favicon_server.ico
+│       └── favicon_login.ico
+│
+├── .env                           # Environment variables
+├── .gitignore                     # Files ignored by Git
+├── requirements.txt               # Python dependencies
+├── procfile                       # Deployment process configuration
+└── README.md                      # Project documentation
+```
 
 ---
 
-## Running the Project
+## 🚀 Features
 
-1. Navigate to the project directory:
-  ```bash
-    cd Project
-  ```
-2. Start the FastAPI server:
-  ```bash
-    python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-  ```
-3. Open your browser and visit:
-
-- Server Dashboard: localhost/server/{id}  
-- Client Page: localhost:8000/
+- Real-time bi-directional communication (WebSockets)
+- Live tracking of connected users
+- Clients can send messages/notifications
+- Server dashboard shows live data and messages
+- Responsive web UI using FastAPI backend
 
 ---
 
-## WebSocket Routes
+## 📦 Requirements
 
-- /ws/server: WebSocket connection for the server dashboard  
-- /ws/client: WebSocket connection for individual clients
-
----
-
-## How It Works
-
-- Clients connect and subscribe via the /ws/client WebSocket route  
-- The server connects via /ws/server to monitor and manage communication  
-- Clients can send notifications, and the server updates connection stats in real time  
-- All communication is handled live using WebSockets for instant feedback
+- Python 3.8+
+- FastAPI
+- uvicorn
+- websockets
+- python-dotenv
+- pymongo
+- pydantic
+- bcrypt
+- motor
 
 ---
 
-## TODO (Optional Enhancements)
+## ▶️ Running the Project
 
-- Add user authentication for clients  
-- Store and display message history  
-- Show timestamps for each message  
-- Improve UI responsiveness on mobile devices
+1. Clone the repository:
+  
+    ```bash
+      git clone https://github.com/Simple-Distributed-Notification-System/Simple-Distributed-Notification-System.git
+    ```
+
+2. Navigate into the directory:
+
+    ```bash
+      cd Project
+    ```
+
+3. Install dependencies:
+
+    ```bash
+      pip install -r requirements.txt
+    ```
+
+4. Run the server:
+
+    ```bash
+      python -m app.main
+    ```
+
+5. Open your browser to:
+
+   - Server Dashboard: <https://127.0.0.1:8000/server/{ID_SERVER}>
+   - Client Page: <https://127.0.0.1:8000/>
+
+---
+
+## 🔌 WebSocket Routes
+
+- `/ws/server` — for server dashboard communication
+- `/ws/client` — for client subscriptions
+
+---
+
+## 📚 How It Works
+
+- Clients subscribe via `/ws/client`
+- Server monitors via `/ws/server`
+- Clients send messages to the server
+- Server broadcasts updates and shows real-time stats
+
+---
+
+## 📌 TODO (Optional Enhancements)
+
+- Add timestamps to messages
+- Display online/offline status of clients
+- Save and display message history
+- Enable file sharing (e.g., images, documents) in chat
+- Improve error handling and reconnection strategy
+- Add theme support (dark/light mode)
+- Support multi-room
+- Optimize performance for high concurrent users

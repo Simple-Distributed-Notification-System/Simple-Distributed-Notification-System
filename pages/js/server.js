@@ -22,6 +22,7 @@ ws.onmessage = (event) => {
     }
 
     if (msg.type === "notifications") {
+        log.innerHTML = "";
         msg.notifications.forEach(notification => {
             displayMassage(notification.message);
         });
