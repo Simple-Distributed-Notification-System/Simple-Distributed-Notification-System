@@ -108,6 +108,7 @@ async def websocket_client(websocket: WebSocket):
         if user_id:
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
+            await update_user(user_id)
             if server_ws[0]:
                 await server_ws[0].send_text(await get_clients_count())
 
@@ -118,6 +119,7 @@ async def websocket_client(websocket: WebSocket):
             # Clean up in case of error
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
+            await update_user(user_id)
             if server_ws[0]:
                 try:
                     await server_ws[0].send_text(await get_clients_count())
