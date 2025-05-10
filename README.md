@@ -41,7 +41,6 @@ Project/
 ├── .env                           # Environment variables
 ├── .gitignore                     # Files ignored by Git
 ├── requirements.txt               # Python dependencies
-├── procfile                       # Deployment process configuration
 └── README.md                      # Project documentation
 ```
 
