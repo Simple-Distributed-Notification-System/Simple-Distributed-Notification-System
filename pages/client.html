@@ -5,18 +5,33 @@
     <title>Client Dashboard</title>
     <link rel="stylesheet" href="/pages/css/client.css">
     <link rel="stylesheet" href="/pages/css/common.css">
-
     <link rel="icon" type="image/x-icon" href="/pages/images/favicon_client.ico">
   </head>
   <body>
     <h2>Client Message Dashboard</h2>
     
     <br>
+    
+    <div class="controls">
+      <button id="loginBtn">Login</button>
+      <button id="subscribeBtn" onclick="subscription()">Subscribe</button>
+    </div>
 
     <h3>Incoming Notifications:</h3>
     <div id="log" class="log"></div>
-
-    <button id="subscribeBtn" onclick="subscription()">Subscribe</button>
+    
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Login</h3>
+        <input type="email" id="emailInput" placeholder="Enter your email" required>
+        <div class="modal-buttons">
+          <button id="submitLoginBtn">Submit</button>
+          <button id="cancelLoginBtn">Cancel</button>
+        </div>
+      </div>
+    </div>
     
     <script src="/pages/js/client.js"></script>
   </body>

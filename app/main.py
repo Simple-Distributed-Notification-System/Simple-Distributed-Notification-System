@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 from app.server import websocket_server
 from app.client import websocket_client
 from app.config import ID_SERVER, SERVER_URL
+from app.database import get_user, update_user
 
 app = FastAPI()
 
@@ -16,6 +17,14 @@ async def get_client_page():
     with open("pages/client.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
+@app.get("/token/{email}/{token}")
+async def update_token(token: str, email: str):
+    user = await get_user(email)
+    if user and user.get("token") == token:
+        await update_user(user_id=user["user_id"], token="None1")
+        return HTMLResponse("Token verified successfully!")
+    return HTMLResponse("Invalid token or email")
+
 @app.get("/server/{id}")
 async def get_server_page(id: str):
     if id != ID_SERVER:
@@ -24,9 +33,10 @@ async def get_server_page(id: str):
     with open("pages/server.html", "r", encoding="utf-8") as f:
         return HTMLResponse(f.read())
 
-@app.websocket("/ws/client/{user_id}")
-async def websocket_client_route(websocket: WebSocket, user_id: str):
-    await websocket_client(websocket, user_id)
+# Make user_id optional in the WebSocket route
+@app.websocket("/ws/client")
+async def websocket_client_route(websocket: WebSocket):
+    await websocket_client(websocket)
 
 @app.websocket("/ws/server")
 async def websocket_server_route(websocket: WebSocket):

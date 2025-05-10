@@ -3,7 +3,7 @@
 import json
 from fastapi import WebSocket, WebSocketDisconnect
 from app.shared_tools import server_ws, subscribed_clients, notify_clients_subscribed, get_clients_count
-from app.database import insert_notification, get_notifications
+from app.database import insert_notification, get_notifications, update_all_users_subscribed
 
 async def websocket_server(websocket: WebSocket):
     try:
@@ -19,6 +19,7 @@ async def websocket_server(websocket: WebSocket):
                 message = msg.get("message", "")
                 await notify_clients_subscribed(message)
                 await insert_notification(message)
+                await update_all_users_subscribed(message)
             elif action == "get_notifications":
                 notifications = await get_notifications()
                 await websocket.send_json({"type": "notifications", "notifications": notifications})
