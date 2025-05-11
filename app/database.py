@@ -3,7 +3,6 @@
 import uuid
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
-from app.shared_tools import get_clients_data
 from app.config import MONGODB_URI_LOCAL, MONGODB_URI_REMOTE
 
 # MongoDB setup
@@ -14,16 +13,18 @@ collection_notification = db["NOTY"]  # collection name
 collection_user = db["USERS"]  # collection name for users
 
 async def insert_notification(message: str):
-    id =  str(uuid.uuid4())  
+    id = str(uuid.uuid4())  
     date = datetime.now(timezone.utc).isoformat()
-    clients_data = await get_clients_data()
+
+    cursor = collection_user.find({"subscribed": True})
+    subscribed_ids = [user["_id"] async for user in cursor]
 
     await collection_notification.insert_one({
         "_id": id,
         "type": "notification",
         "message": message,
         "timestamp": date,
-        "subscribed_clients": clients_data["subscribers"]
+        "subscribed_clients": subscribed_ids
     })
 
     await collection_user.update_many(
@@ -33,14 +34,17 @@ async def insert_notification(message: str):
                 "_id": id,
                 "message": message,
                 "timestamp": date
-                }
             }
-        }
+        }}
     )
 
 async def get_notifications():
     notifications = await collection_notification.find().to_list(length=None)
     return notifications
+
+async def get_all_users_subscribed():
+    users = await collection_user.find({"subscribed": True}).to_list(length=None)
+    return users
 
 async def insert_user(user_id: str, email: str, token: str = None):
     await collection_user.insert_one({

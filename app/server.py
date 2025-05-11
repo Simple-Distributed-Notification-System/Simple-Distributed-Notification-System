@@ -2,7 +2,7 @@
 
 import json
 from fastapi import WebSocket, WebSocketDisconnect
-from app.shared_tools import server_ws, notify_clients_subscribed, get_clients_count, subscribed_clients
+from app.shared_tools import server_ws, notify_clients_subscribed, get_clients_count
 from app.database import insert_notification, get_notifications, get_all_users
 
 async def websocket_server(websocket: WebSocket):

@@ -1,7 +1,8 @@
 const log = document.getElementById('messages');
 const countSubscribers = document.getElementById("count-subscribers");
 const countClients = document.getElementById("count-clients");
-const countGuests = document.getElementById("count-guests");
+const countClientsOnline = document.getElementById("count-clients-online");
+const countSubscribersOnline = document.getElementById("count-subscribers-online");
 const ws = new WebSocket(`wss://${location.host}/ws/server`);
 
 // Flag to check if counts have been requested after reconnect
@@ -22,9 +23,10 @@ ws.onopen = () => {
 ws.onmessage = (event) => {
     const msg = JSON.parse(event.data);
     if (msg.type === "counts") {
-        countSubscribers.textContent = msg.subscribers;
+        countSubscribersOnline.textContent = msg.subscribersOnline;
+        countClientsOnline.textContent = msg.online;
         countClients.textContent = msg.clients;
-        countGuests.textContent = msg.guests;
+        countSubscribers.textContent = msg.allSubscribers;
     }
 
     if (msg.type === "notifications") {
@@ -39,7 +41,7 @@ ws.onmessage = (event) => {
         // Update user data in popup if open
         const popup = document.getElementById('popup');
         updateUserList(msg.users, msg.notificationId);
-        
+
         // If popup is open, keep the display updated
         if (!popup.classList.contains('hidden')) {
             // We already have the data, no need to request again

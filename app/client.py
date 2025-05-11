@@ -1,13 +1,12 @@
 # clint.py
 
-import asyncio
 import json
 import uuid
 from email_validator import validate_email, EmailNotValidError
 from datetime import datetime, timedelta, timezone
 from starlette import status
 from fastapi import WebSocket, WebSocketDisconnect
-from app.shared_tools import server_ws, subscribed_clients, clients, guests , get_clients_count
+from app.shared_tools import server_ws, subscribed_clients, clients , get_clients_count
 from app.message import send_email
 from app.database import insert_user, get_user, update_user
 
@@ -16,7 +15,6 @@ async def websocket_client(websocket: WebSocket):
     try:
         # Accept the new WebSocket connection
         await websocket.accept()
-        guests[websocket] = True
         login = False
 
         if server_ws[0]:
@@ -109,7 +107,6 @@ async def websocket_client(websocket: WebSocket):
     except WebSocketDisconnect:
         # Handle the WebSocket disconnect event
         if user_id:
-            guests.pop(websocket, None)
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
             await update_user(user_id, online=False)
@@ -121,7 +118,6 @@ async def websocket_client(websocket: WebSocket):
         if user_id:
             print(f"WebSocket Error ({user_id}):", e)
             # Clean up in case of error
-            guests.pop(websocket, None)
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
             await update_user(user_id, online=False)
