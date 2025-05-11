@@ -3,6 +3,7 @@
 import json
 
 server_ws = [None]
+guests = {}
 clients = {}
 subscribed_clients = {}  
 
@@ -19,6 +20,7 @@ async def notify_clients_subscribed(message: str):
 async def get_clients_count():
     return json.dumps({
         "type": "counts",
+        "guests": len(guests),
         "subscribers": len(subscribed_clients),
         "clients": len(clients),
     })
@@ -28,4 +30,5 @@ async def get_clients_data():
         "type": "clients",
         "subscribers": list(subscribed_clients.keys()),
         "clients": len(clients),
+        "guests": len(guests),
     }

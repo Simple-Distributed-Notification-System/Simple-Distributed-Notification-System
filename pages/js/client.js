@@ -28,12 +28,12 @@ ws.onmessage = function(event) {
     const msg = JSON.parse(event.data);
 
     if (msg.type === "notification") {
-        displayMessage(msg.message);
+        displayMessage(msg);
     }
-    if (msg.type === "success" && msg.msg) {
+    if (msg.type === "success" && msg.messages) {
         log.innerHTML = "";
-        msg.msg.forEach(notification => {
-            displayMessage(notification);
+        msg.messages.forEach(msg => {
+            displayMessage(msg);
         });
     }
     if (msg.isSubscribed != undefined && msg.type === "success") {
@@ -126,18 +126,64 @@ function showVisualNotification(title, message) {
     }, 5000); // Remove after 5 seconds
 }
 
+function formatTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function formatDateTime(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+}
+
 function displayMessage(msg) {
     const messageCard = document.createElement('div');
     messageCard.className = 'message-card fade-in';
 
+    const cardContent = document.createElement('div');
+    cardContent.className = 'message-card-content';
+
     const messageText = document.createElement('div');
     messageText.className = 'message-text';
-    messageText.textContent = msg;
+    messageText.textContent = msg.message;
 
-    messageCard.appendChild(messageText);
+    const messageTime = document.createElement('div');
+    messageTime.className = 'message-time';
+    messageTime.textContent = formatTime(msg.timestamp);
+
+    cardContent.appendChild(messageText);
+    cardContent.appendChild(messageTime);
+    messageCard.appendChild(cardContent);
     log.appendChild(messageCard);
     log.scrollTop = log.scrollHeight;
+
+    messageCard.addEventListener('click', () => {
+        document.querySelector('.popup-message').textContent = msg.message;
+        document.querySelector('.popup-time').textContent = formatDateTime(msg.timestamp);
+        document.getElementById('popup').classList.remove('hidden');
+    });
 }
+
+document.querySelector('.close-btn').addEventListener('click', () => {
+    document.getElementById('popup').classList.add('hidden');
+});
+
+
+document.getElementById('popup').addEventListener('click', (e) => {
+    if (e.target.id === 'popup') {
+        document.getElementById('popup').classList.add('hidden');
+    }
+});
+
+
 
 // Open modal when clicking login button
 loginBtn.addEventListener("click", function() {
