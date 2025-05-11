@@ -1,5 +1,3 @@
-# shared_tools.py
-
 import json
 from datetime import datetime, timezone
 from app.database import get_all_users, get_all_users_subscribed

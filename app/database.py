@@ -1,16 +1,13 @@
-# database.py
-
 import uuid
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import MONGODB_URI_LOCAL, MONGODB_URI_REMOTE
 
-# MongoDB setup
-client = AsyncIOMotorClient(MONGODB_URI_LOCAL) # Uncomment this line to use local MongoDB
-# client = AsyncIOMotorClient(MONGODB_URI_REMOTE)  # Uncomment this line to use remote MongoDB
+client = AsyncIOMotorClient(MONGODB_URI_LOCAL) 
+# client = AsyncIOMotorClient(MONGODB_URI_REMOTE)  
 db = client["Notification"]
-collection_notification = db["NOTY"]  # collection name
-collection_user = db["USERS"]  # collection name for users
+collection_notification = db["NOTY"] 
+collection_user = db["USERS"] 
 
 async def insert_notification(message: str):
     id = str(uuid.uuid4())  
@@ -70,7 +67,7 @@ async def get_all_users():
             "timestamp": user["timestamp"],
             "timeLogin": user["timeLogin"],
             "token": user["token"],
-            "online": user.get("online", False)  # Use get with default for backward compatibility
+            "online": user.get("online", False)  
         }
         for user in users
     ]    
@@ -86,7 +83,7 @@ async def get_user(email: str):
             "timestamp": user["timestamp"],
             "timeLogin": user["timeLogin"],
             "token": user["token"],
-            "online": user.get("online", False)  # Use get with default for backward compatibility
+            "online": user.get("online", False) 
         }
 
 async def update_user(user_id: str, token: str = None, subscribed: bool = None, online: bool = None):

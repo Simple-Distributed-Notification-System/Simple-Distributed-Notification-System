@@ -1,5 +1,3 @@
-# server.py
-
 import json
 from fastapi import WebSocket, WebSocketDisconnect
 from app.shared_tools import server_ws, notify_clients_subscribed, get_clients_count
@@ -24,15 +22,12 @@ async def websocket_server(websocket: WebSocket):
                 await websocket.send_json({"type": "notifications", "notifications": notifications})
             elif action == "get_user_data":
                 notification_id = msg.get("notificationId")
-                # Get all users to check who has seen the notification
                 users = await get_all_users()
                 await websocket.send_json({
                     "type": "users", 
                     "users": users,
                     "notificationId": notification_id
                 })
-            elif action == "":
-                break
             elif action == "count":
                 await server_ws[0].send_text(await get_clients_count())
 

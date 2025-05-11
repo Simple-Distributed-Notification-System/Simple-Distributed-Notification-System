@@ -1,4 +1,3 @@
-# main.py
 import os
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles

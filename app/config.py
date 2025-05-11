@@ -1,9 +1,7 @@
-# config.py
-
 from dotenv import load_dotenv
 import os
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()  
 
 MONGODB_URI_LOCAL = os.getenv("MONGODB_URI_LOCAL")
 MONGODB_URI_REMOTE = os.getenv("MONGODB_URI_REMOTE")

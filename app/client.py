@@ -1,5 +1,3 @@
-# clint.py
-
 import json
 import uuid
 from email_validator import validate_email, EmailNotValidError
@@ -11,9 +9,9 @@ from app.message import send_email
 from app.database import insert_user, get_user, update_user
 
 async def websocket_client(websocket: WebSocket):
-    user_id = None  # Initialize user_id to avoid reference before assignment
+    user_id = None 
     try:
-        # Accept the new WebSocket connection
+        
         await websocket.accept()
         login = False
 
@@ -33,7 +31,6 @@ async def websocket_client(websocket: WebSocket):
                 email = data.get("email")
 
                 try:
-                    # Validate the email format
                     validate_email(email)
 
                 except EmailNotValidError as e:
@@ -53,16 +50,14 @@ async def websocket_client(websocket: WebSocket):
                     last_login_time = datetime.fromisoformat(user["timeLogin"]).replace(tzinfo=timezone.utc)
                     current_time = datetime.now(timezone.utc)
 
-                    # Check if 5 minutes have passed since the last login
                     time_diff = current_time - last_login_time
                     if time_diff >= timedelta(minutes=5):
                         token = str(uuid.uuid4())
-                        await update_user(user_id, token=token, online=False)  # Update token
-                        await send_email(user["email"], token)  # Send email with token
+                        await update_user(user_id, token=token, online=False) 
+                        await send_email(user["email"], token)  
                         await websocket.send_json({"type": "success", "message": "Token sent to your email."})
                         continue
                     else:
-                        # Update last login time
                         await update_user(user_id, online=True)
                         await websocket.send_json({"type": "success", "message": "Login successful."})
                         await websocket.send_json({
@@ -80,7 +75,6 @@ async def websocket_client(websocket: WebSocket):
                     await websocket.send_json({"type": "success", "message": "Account created. Token sent to your email."})
                     continue
 
-                # Update to new user ID
                 clients[user_id] = websocket
 
             elif action == "subscribe" and login:
@@ -105,7 +99,6 @@ async def websocket_client(websocket: WebSocket):
                 await server_ws[0].send_text(await get_clients_count())
 
     except WebSocketDisconnect:
-        # Handle the WebSocket disconnect event
         if user_id:
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
@@ -114,10 +107,8 @@ async def websocket_client(websocket: WebSocket):
                 await server_ws[0].send_text(await get_clients_count())
 
     except Exception as e:
-        # Handle other exceptions
         if user_id:
             print(f"WebSocket Error ({user_id}):", e)
-            # Clean up in case of error
             clients.pop(user_id, None)
             subscribed_clients.pop(user_id, None)
             await update_user(user_id, online=False)
