@@ -1,6 +1,9 @@
 from dotenv import load_dotenv
 import os
 
+# Takes the things .env files and encrypts them
+
+
 load_dotenv()  
 
 MONGODB_URI_LOCAL = os.getenv("MONGODB_URI_LOCAL")

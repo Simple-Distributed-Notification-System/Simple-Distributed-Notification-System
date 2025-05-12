@@ -1,7 +1,7 @@
 
-# Real-time Notification & Chat App with FastAPI + WebSocket
+# Real-time Notification System with WebSocket
 
-This project is a real-time WebSocket-based system built with FastAPI (backend) and HTML/CSS/JavaScript (frontend). It enables real-time communication between a server and multiple clients, supporting live notifications and connected user tracking.
+This project is a real-time WebSocket-based system built with Websocket + FastAPI (Backend) and HTML/CSS/JavaScript (frontend). It enables real-time communication between a server and multiple clients, supporting live notifications.
 
 ---
 
@@ -10,11 +10,11 @@ This project is a real-time WebSocket-based system built with FastAPI (backend) 
 ```bash
 Project/
 │
-├── app/                           # Backend logic and FastAPI code
+├── app/                           # Backend 
 │   ├── certs/                     # SSL/TLS certificates
 │   │   ├── cert.pem
 │   │   └── key.pem
-│   ├── main.py                    # FastAPI entry point
+│   ├── main.py                    # Websocket + FastAPI entry point
 │   ├── config.py                  # Environment configurations
 │   ├── database.py                # MongoDB operations
 │   ├── server.py                  # Server WebSocket logic
@@ -40,7 +40,7 @@ Project/
 │
 ├── .env                           # Environment variables
 ├── .gitignore                     # Files ignored by Git
-├── requirements.txt               # Python dependencies
+├── requirements.txt               # Python libraries
 └── README.md                      # Project documentation
 ```
 
@@ -50,7 +50,6 @@ Project/
 
 - Real-time bi-directional communication (WebSockets)
 - Live tracking of connected users
-- Clients can send messages/notifications
 - Server dashboard shows live data and messages
 - Responsive web UI using FastAPI backend
 
@@ -114,18 +113,13 @@ Project/
 
 - Clients subscribe via `/ws/client`
 - Server monitors via `/ws/server`
-- Clients send messages to the server
 - Server broadcasts updates and shows real-time stats
 
 ---
 
-## 📌 TODO (Optional Enhancements)
+## 📌 Future Enhancements
 
-- Add timestamps to messages
-- Display online/offline status of clients
-- Save and display message history
-- Enable file sharing (e.g., images, documents) in chat
+- Enable file sharing (e.g., images, documents) by server to clients
 - Improve error handling and reconnection strategy
-- Add theme support (dark/light mode)
-- Support multi-room
-- Optimize performance for high concurrent users
+- Add theme support (dark/light mode) 
+- Optimize performance for high concurrent clients

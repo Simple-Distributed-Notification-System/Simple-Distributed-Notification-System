@@ -5,7 +5,7 @@ const countClientsOnline = document.getElementById("count-clients-online");
 const countSubscribersOnline = document.getElementById("count-subscribers-online");
 const ws = new WebSocket(`wss://${location.host}/ws/server`);
 
-// Flag to check if counts have been requested after reconnect
+// Check if counts have been requested after reconnect
 let countsRequested = false;
 // Store the full notification data including subscribers
 let notificationsData = [];
@@ -31,26 +31,24 @@ ws.onmessage = (event) => {
 
     if (msg.type === "notifications") {
         log.innerHTML = "";
-        notificationsData = msg.notifications; // Store full notifications data
+        notificationsData = msg.notifications; // Store notifications data
         msg.notifications.forEach(notification => {
             displayMessage(notification);
         });
     }
     
     if (msg.type === "users") {
-        // Update user data in popup if open
+        // Update user data 
         const popup = document.getElementById('popup');
         updateUserList(msg.users, msg.notificationId);
 
         // If popup is open, keep the display updated
         if (!popup.classList.contains('hidden')) {
-            // We already have the data, no need to request again
         }
     }
 
     // Handle real-time notification updates
     if (msg.type === "notification_update") {
-        // If we're currently viewing this notification in the popup, refresh user data
         if (currentViewedNotification === msg.notificationId) {
             requestUserData(msg.notificationId);
         }
@@ -147,7 +145,7 @@ function displayMessage(msg) {
     log.appendChild(messageCard);
     log.scrollTop = log.scrollHeight;
 
-    // Add notification ID as data attribute
+    // Add notification ID as data 
     if (msg._id) {
         messageCard.dataset.notificationId = msg._id;
     }

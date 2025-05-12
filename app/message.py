@@ -2,6 +2,8 @@ import smtplib
 from email.message import EmailMessage
 from app.config import EMAIL, EMAIL_PASSWORD, SERVER_URL
 
+# The Page responsible for the verification email sent to the client when logging in
+
 async def send_email(to_email, token):
     html_content = f"""
         <html>

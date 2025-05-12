@@ -8,19 +8,25 @@ from app.shared_tools import server_ws, subscribed_clients, clients , get_client
 from app.message import send_email
 from app.database import insert_user, get_user, update_user
 
+# Function that handles each user that connects 
 async def websocket_client(websocket: WebSocket):
+    # New User with no ID yet
     user_id = None 
     try:
         
+        # Accept the client’s connection, and by default they are not logged in
         await websocket.accept()
         login = False
 
+        # If the server page is open get me the number of clients
         if server_ws[0]:
             await server_ws[0].send_text(await get_clients_count())
 
+        # Keep waiting until a new message is sent by the server
         while True:
             data = await websocket.receive_text()
 
+            # Converts Message to JSON format
             data = json.loads(data)
             action = data.get("action")
             
@@ -37,16 +43,19 @@ async def websocket_client(websocket: WebSocket):
                     await websocket.send_json({"type": "error_email", "message": f"Invalid email format: {str(e)}"})
                     continue
 
+                # Sees if the Email is stored in the database
                 user = await get_user(email)
 
                 if user:
                     login = True
                     user_id = user["user_id"]
 
+                    # Checks if the token has already been sent to you
                     if user["token"] is not None:
                         await websocket.send_json({"type": "error_token", "message": "Token already sent."})
                         continue
 
+                    # Last time the user was logged in    
                     last_login_time = datetime.fromisoformat(user["timeLogin"]).replace(tzinfo=timezone.utc)
                     current_time = datetime.now(timezone.utc)
 

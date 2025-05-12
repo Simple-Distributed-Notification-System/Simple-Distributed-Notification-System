@@ -3,8 +3,8 @@ from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorClient
 from app.config import MONGODB_URI_LOCAL, MONGODB_URI_REMOTE
 
-client = AsyncIOMotorClient(MONGODB_URI_LOCAL) 
 # client = AsyncIOMotorClient(MONGODB_URI_REMOTE)  
+client = AsyncIOMotorClient(MONGODB_URI_LOCAL) 
 db = client["Notification"]
 collection_notification = db["NOTY"] 
 collection_user = db["USERS"] 
@@ -13,8 +13,12 @@ async def insert_notification(message: str):
     id = str(uuid.uuid4())  
     date = datetime.now(timezone.utc).isoformat()
 
-    cursor = collection_user.find({"subscribed": True})
-    subscribed_ids = [user["_id"] async for user in cursor]
+    # Finds all the clients that are subcribed
+    subcribed_users = collection_user.find({"subscribed": True})
+
+    # Extracts the id of each subscribed user
+    subscribed_ids = [user["_id"] async for user in subcribed_users]
+
 
     await collection_notification.insert_one({
         "_id": id,
@@ -24,6 +28,7 @@ async def insert_notification(message: str):
         "subscribed_clients": subscribed_ids
     })
 
+    # Updates the new message sent by the server to client
     await collection_user.update_many(
         {"subscribed": True},
         {"$push": {
@@ -35,6 +40,7 @@ async def insert_notification(message: str):
         }}
     )
 
+# Server Previously Sent Messages
 async def get_notifications():
     notifications = await collection_notification.find().to_list(length=None)
     return notifications

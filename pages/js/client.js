@@ -9,19 +9,11 @@ const submitLoginBtn = document.getElementById("submitLoginBtn");
 const cancelLoginBtn = document.getElementById("cancelLoginBtn");
 const span = document.getElementsByClassName("close")[0];
 
-// Remove trailing slash from WebSocket URL
 const ws = new WebSocket(`wss://${location.host}/ws/client`);
 
 ws.onopen = function() {
     console.log("WebSocket connection established.");
     showVisualNotification("Connection", "Connected to server");
-    if (localStorage.getItem("userId")) {
-        userId = localStorage.getItem("userId");
-        ws.send(JSON.stringify({
-            action: "userId",
-            userId: userId
-        }));
-    }
 };
 
 ws.onmessage = function(event) {
@@ -109,16 +101,13 @@ function showVisualNotification(title, message) {
     notify.textContent = `${title}: ${message}`;
     notify.classList.add('notification');
     
-    // Dynamically position the notification based on the count
-    notify.style.top = `${20 + notificationCount * 70}px`;  // Adjust 70px based on your notification height
+    notify.style.top = `${20 + notificationCount * 70}px`;  
     
     document.body.appendChild(notify);
-    notificationCount++; // Increment the notification count
-
+    notificationCount++;
     setTimeout(() => {
         notify.remove();
-        notificationCount--; // Decrement the count when removed
-        // Reposition other notifications
+        notificationCount--;
         const notifications = document.querySelectorAll('.notification');
         notifications.forEach((notif, index) => {
             notif.style.top = `${20 + index * 70}px`;
@@ -185,17 +174,17 @@ document.getElementById('popup').addEventListener('click', (e) => {
 
 
 
-// Open modal when clicking login button
+// Open when clicking login button
 loginBtn.addEventListener("click", function() {
     modal.style.display = "block";
 });
 
-// Close modal with X button
+// Close with X button
 span.addEventListener("click", function() {
     modal.style.display = "none";
 });
 
-// Close modal with Cancel button
+// Close with Cancel button
 cancelLoginBtn.addEventListener("click", function() {
     modal.style.display = "none";
 });
@@ -206,14 +195,14 @@ submitLoginBtn.addEventListener("click", function() {
     modal.style.display = "none";
 });
 
-// Close modal when clicking outside
+// Close when clicking outside
 window.addEventListener("click", function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
     }
 });
 
-// Allow Enter key to submit the form
+// Enter key to submit the form
 document.getElementById("emailInput").addEventListener("keyup", function(event) {
     if (event.key === "Enter") {
         login();
