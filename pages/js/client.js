@@ -8,7 +8,9 @@ const loginBtn = document.getElementById("loginBtn");
 const submitLoginBtn = document.getElementById("submitLoginBtn");
 const cancelLoginBtn = document.getElementById("cancelLoginBtn");
 const span = document.getElementsByClassName("close")[0];
+const loader = document.getElementById("loadingOverlay");
 
+// Connect to WebSocket
 const ws = new WebSocket(`wss://${location.host}/ws/client`);
 
 ws.onopen = function() {
@@ -35,6 +37,8 @@ ws.onmessage = function(event) {
             showVisualNotification("Subscription Status", isSubscribed ? "Subscribed" : "Unsubscribed");
         }
     } else if (msg.type === "success") {
+        loader.classList.add("hidden");
+        modal.style.display = "none";
         showVisualNotification("Success", msg.message);
         if (msg.userId) {
             userId = msg.userId;
@@ -53,6 +57,9 @@ ws.onmessage = function(event) {
         console.log("Token Error:", msg.message);
         showVisualNotification("Token Error", msg.message);
     }
+    if (msg.type === "error" || msg.type === "error_email" || msg.type === "error_token") {
+    loader.classList.add("hidden");
+}
 };
 
 ws.onerror = function(error) {
@@ -69,6 +76,7 @@ ws.onclose = function(event) {
 
 function login() {
     if (ws.readyState === WebSocket.OPEN) {
+        loader.classList.remove("hidden");
         const email = document.getElementById('emailInput').value.trim();
         if (email) {
             ws.send(JSON.stringify({
@@ -78,9 +86,11 @@ function login() {
             showVisualNotification("Login", email);
         } else {
             showVisualNotification("Error", "Please enter an email address");
+            loader.classList.add("hidden");
         }
     } else {
         showVisualNotification("Error", "Not connected to server");
+        loader.classList.add("hidden");
     }
 }
 
@@ -172,8 +182,6 @@ document.getElementById('popup').addEventListener('click', (e) => {
     }
 });
 
-
-
 // Open when clicking login button
 loginBtn.addEventListener("click", function() {
     modal.style.display = "block";
@@ -192,7 +200,6 @@ cancelLoginBtn.addEventListener("click", function() {
 // Submit login
 submitLoginBtn.addEventListener("click", function() {
     login();
-    modal.style.display = "none";
 });
 
 // Close when clicking outside

@@ -3,7 +3,6 @@ const countSubscribers = document.getElementById("count-subscribers");
 const countClients = document.getElementById("count-clients");
 const countClientsOnline = document.getElementById("count-clients-online");
 const countSubscribersOnline = document.getElementById("count-subscribers-online");
-const ws = new WebSocket(`wss://${location.host}/ws/server`);
 
 // Check if counts have been requested after reconnect
 let countsRequested = false;
@@ -11,6 +10,9 @@ let countsRequested = false;
 let notificationsData = [];
 // Store the current notification being viewed in popup
 let currentViewedNotification = null;
+
+// Connect to WebSocket
+const ws = new WebSocket(`wss://${location.host}/ws/server`);
 
 ws.onopen = () => {
     console.log("WebSocket connection established");
